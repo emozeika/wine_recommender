@@ -6,7 +6,7 @@ import json
 import math
 
 #loading in necessary variables from config file
-from config import RAW_DATA_PATH
+from config import RAW_DATA_PATH, USER_AGENT
 
 
 
@@ -22,11 +22,10 @@ class Vivino(object):
         'country' : '/countries',
         'grape' : '/grapes',
         'vintage': '/explore/explore?region_ids[]={}&page={}&per_page=50'
-        #'vintage' : '/explore/explore?price_range_min=1&page={}&per_page=50'   
     }
+
     HEADERS_ =  { 
-        #"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0"
-        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
+        'User-Agent': USER_AGENT
     }
 
     def __init__(self):
@@ -57,6 +56,7 @@ class Vivino(object):
 
 
         return response
+
 
     
     def get_vintage_data(self):

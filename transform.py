@@ -20,6 +20,8 @@ class Transform(object):
     def __init__(self):
         pass
 
+
+
     def load_file(self, file_name):
         '''
         Function to load raw json file
@@ -30,6 +32,7 @@ class Transform(object):
         file.close()
 
         return raw_data
+
 
 
     def create_region_table(self):
@@ -110,13 +113,6 @@ class Transform(object):
         return df
 
 
-    #TODO
-    def create_wine_table(self):
-        pass
-    def create_winery_table(self):
-        pass
-
-
 
     def create_vintage_table(self):
         '''
@@ -147,6 +143,15 @@ class Transform(object):
         return df
 
 
+    #TODO
+    def create_style_table(self):
+        pass
+    def create_wine_table(self):
+        pass
+    def create_winery_table(self):
+        pass
+
+
 
     def create_table(self, table_name):
         if table_name == 'region':
@@ -155,6 +160,8 @@ class Transform(object):
             df = self.create_grape_table()
         elif table_name == 'vintage':
             df = self.create_vintage_table()
+        elif table_name == 'country':
+            df = self.create_country_table()
 
         return df
 
@@ -179,7 +186,7 @@ class Transform(object):
 
 
 if __name__ == '__main__':
-    d = Transform().create_table('region')
-    PostGresClient().insert_data_from_df(d, 'region')
+    d = Transform().create_table('country')
+    PostGresClient().insert_data_from_df(d, 'country')
     
    
