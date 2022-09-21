@@ -78,9 +78,9 @@ class Transform(object):
 
             #append grape id, name, seo name
             grape_data.extend((
-                grape['id'],
-                grape['name'],
-                grape['seo_name']
+                grape.get('id', 'NULL'),
+                grape.get('name', 'NULL'),
+                grape.get('seo_name', 'NULL')
             ))
 
             grapes_data.append(grape_data)
@@ -103,11 +103,11 @@ class Transform(object):
             country_data = []
 
             country_data.extend((
-                country.get('code', None),
-                country.get('name', None),
-                country.get('seo_name', None),
-                country['currency'].get('code', None),
-                country['currency'].get('name', None),
+                country.get('code', 'NULL'),
+                country.get('name', 'NULL'),
+                country.get('seo_name', 'NULL'),
+                country.get('currency').get('code', 'NULL') if country.get('currency', None) else 'NULL',
+                country.get('currency').get('name', 'NULL') if country.get('currency', None) else 'NULL'
             ))
 
             countries_data.append(country_data)
@@ -127,17 +127,18 @@ class Transform(object):
 
         vintages_data = []
         for vintage in raw_data['vintages']:
+            vintage = vintage['vintage']
             vintage_data = []
             #getting id, name and seo_name
             vintage_data.extend((
-                            vintage['vintage'].get('id', None),                                   #vintage id
-                            vintage['vintage']['name'].replace('\t', 't'),                        #vintage name
-                            vintage['vintage'].get('seo_name', None),                             #vintage search engine name
-                            vintage['vintage'].get('year', None),                                 #vintage year
-                            vintage['vintage']['statistics'].get('ratings_average', None),        #avergae rating
-                            vintage['vintage']['statistics'].get('ratings_count', None),          #number of ratings
-                            vintage['vintage']['wine'].get('id', None)                            #wine id
-                            ))
+                vintage.get('id', 'NULL'),                                                              #vintage id
+                vintage.get('name').replace('\t', ' ') if vintage.get('name', None) else 'NULL',        #vintage name
+                vintage.get('seo_name', 'NULL'),                                                        #vintage search engine name
+                vintage.get('year', 'NULL'),                                                            #vintage year
+                vintage.get('statistics').get('ratings_average', 'NULL') if vintage.get('statistics', None) else 'NULL',        #avergae rating
+                vintage.get('statistics').get('ratings_count', 'NULL') if vintage.get('statistics', None) else 'NULL',          #number of ratings
+                vintage.get('wine').get('id', 'NULL') if vintage.get('wine', None) else 'NULL',                             #wine id
+            ))
 
             vintages_data.append(vintage_data)
 
