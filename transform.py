@@ -148,7 +148,7 @@ class Transform(object):
         return df
     
 
-    #TODO
+    
     def create_style_table(self):
         '''
         Function to create the style table from raw data
@@ -183,7 +183,47 @@ class Transform(object):
 
 
     def create_wine_table(self):
-        pass
+        '''
+        Function to create the style table from raw data
+        '''
+        raw_data = self.load_file('vintage.json')
+
+        wines_data = []
+        for wine in raw_data['vintages']:
+            wine = wine.get('vintage').get('wine')
+            
+            wine_data = []
+            if wine:
+                wine_data.extend((
+                    wine.get('id', 'NULL'),
+                    wine.get('name', 'NULL').replace('\t', ''),
+                    wine.get('seo_name', 'NULL'),
+                    wine.get('type_id', 'NULL'),
+                    wine.get('region').get('id', 'NULL') if wine.get('region', None) else 'NULL',
+                    wine.get('winery').get('id', 'NULL') if wine.get('winery', None) else 'NULL',
+                    wine.get('taste').get('structure').get('acidity', 'NULL') if wine.get('taste').get('structure', None) else 'NULL',
+                    wine.get('taste').get('structure').get('fizziness', 'NULL') if wine.get('taste').get('structure', None) else 'NULL',
+                    wine.get('taste').get('structure').get('intensity', 'NULL') if wine.get('taste').get('structure', None) else 'NULL',
+                    wine.get('taste').get('structure').get('sweetness', 'NULL') if wine.get('taste').get('structure', None) else 'NULL',
+                    wine.get('taste').get('structure').get('tannin', 'NULL') if wine.get('taste').get('structure', None) else 'NULL',
+                    #CAN POTENTIALLY ADD FLAVOR NOTES HERE!!!!!!!
+                    wine.get('statistics').get('ratings_count', 'NULL') if wine.get('statistics', None) else 'NULL',
+                    wine.get('statistics').get('ratings_average', 'NULL') if wine.get('statistics', None) else 'NULL',
+                    wine.get('style').get('id', 'NULL') if wine.get('style', None) else 'NULL',
+
+                ))
+                wines_data.append(wine_data)
+
+        cols = ['id', 'name', 'seo_name', 'wine_type_id', 'region_id', 'winery_id',
+                'acidity', 'fizziness', 'sweetness', 'intensity', 'tannin', 'ratings_count', 'avg_rating',
+                'style_id']
+        df = df = pd.DataFrame(wines_data, columns=cols)
+        df.drop_duplicates(inplace=True) #drop dupicates since we build through vintage
+        return df
+
+
+
+    #TODO
     def create_winery_table(self):
         pass
 
@@ -200,6 +240,10 @@ class Transform(object):
             df = self.create_country_table()
         elif table_name == 'style':
             df = self.create_style_table()
+        elif table_name == 'wine':
+            df = self.create_wine_table()
+        elif table_name == 'winery':
+            df = self.create_winery_table()
 
         return df
 
@@ -224,8 +268,8 @@ class Transform(object):
 
 
 if __name__ == '__main__':
-    d = Transform().create_table('region')
-    PostGresClient().insert_data_from_df(d, 'region')
+    d = Transform().create_table('wine')
+    PostGresClient().insert_data_from_df(d, 'wine')
     #print(d.region_id.unique())
     
    
