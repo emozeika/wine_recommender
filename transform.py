@@ -1,3 +1,4 @@
+from pkgutil import extend_path
 import pandas as pd
 import json
 import pprint as pprint
@@ -81,6 +82,39 @@ class Transform(object):
         df = pd.DataFrame(grapes_data, columns=cols)
 
         return df
+        
+
+    
+    def create_country_table(self):
+        '''
+        Function to create the countries table from raw data
+        '''
+        raw_data = self.load_file('country.json')
+
+        countries_data = []
+        for country in raw_data['countries']:
+            country_data = []
+
+            country_data.extend((
+                country.get('code', None),
+                country.get('name', None),
+                country.get('seo_name', None),
+                country['currency'].get('code', None),
+                country['currency'].get('name', None),
+            ))
+
+            countries_data.append(country_data)
+        cols = ['country_code', 'country_name', 'country_seo_name', 'country_curr_code', 'country_curr_name']
+        df = pd.DataFrame(countries_data, columns=cols)
+
+        return df
+
+
+    #TODO
+    def create_wine_table(self):
+        pass
+    def create_winery_table(self):
+        pass
 
 
 
@@ -102,13 +136,12 @@ class Transform(object):
                             vintage['vintage'].get('year', None),                                 #vintage year
                             vintage['vintage']['statistics'].get('ratings_average', None),        #avergae rating
                             vintage['vintage']['statistics'].get('ratings_count', None),          #number of ratings
-                            vintage['vintage']['statistics'].get('reviews_count', None),          #number of reviews
                             vintage['vintage']['wine'].get('id', None)                            #wine id
                             ))
 
             vintages_data.append(vintage_data)
 
-        cols = ['id', 'name', 'seo_name', 'year', 'avg_rating', 'rating_count', 'review_count', 'wine_id']
+        cols = ['id', 'name', 'seo_name', 'year', 'avg_rating', 'rating_count',  'wine_id']
         df = pd.DataFrame(vintages_data, columns=cols)
 
         return df
