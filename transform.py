@@ -46,15 +46,19 @@ class Transform(object):
         for region in raw_data['regions']:
             region_data = []
 
-            #appending id, name and english name
-            region_data.extend((region['id'], region['name'], region['name_en']))
-            #appending country info
-            region_data.extend((region['country']['name'], region['country']['code']))
+            region_data.extend((
+                region.get('id', 'NULL') if region.get('id', None) else 'NULL',
+                region.get('name', 'NULL') if region.get('name', None) else 'NULL',
+                region.get('name_en', 'NULL') if region.get('name_en', None) else 'NULL',
+                region.get('seo_name', 'NULL') if region.get('seo_name', None) else 'NULL',
+                region.get('country').get('name', 'NULL') if region.get('country', None) else 'NULL',
+                region.get('country').get('code', 'NULL') if region.get('country', None) else 'NULL',
+            ))
 
             #append low to data frame
             regions_data.append(region_data)
 
-        cols = ['id', 'name', 'name_english', 'country_name', 'country_code']
+        cols = ['id', 'name', 'name_english', 'seo_name', 'country_name', 'country_code']
         df = pd.DataFrame(regions_data, columns=cols)
 
         return df
@@ -141,11 +145,42 @@ class Transform(object):
         df = pd.DataFrame(vintages_data, columns=cols)
 
         return df
-
+    
 
     #TODO
     def create_style_table(self):
-        pass
+        '''
+        Function to create the style table from raw data
+        '''
+        raw_data = self.load_file('style.json')
+
+        styles_data = []
+        for style in raw_data['wine_styles']:
+            style_data = []
+
+            style_data.extend((
+                style.get('id', 'NULL') if style.get('id', None) else 'NULL',
+                style.get('name').replace('\t', ' ') if style.get('name', None) else 'NULL',
+                style.get('seo_name', 'NULL') if style.get('seo_name', None) else 'NULL',
+                style.get('description', 'NULL').replace('\n', '') if style.get('description', None) else 'NULL',
+                style.get('body', 'NULL') if style.get('body', None) else 'NULL',
+                style.get('body_description', 'NULL') if style.get('body_description', None) else 'NULL',
+                style.get('acidity', 'NULL') if style.get('acidity', None) else 'NULL',
+                style.get('acidity_description', 'NULL') if style.get('acidity_description', None) else 'NULL',
+                style.get('country').get('code', 'NULL') if style.get('country', None) else 'NULL',
+                style.get('wine_type_id', 'NULL') if style.get('wine_type_id', None) else 'NULL',
+                style.get('region').get('id', 'NULL') if style.get('region', None) else 'NULL'
+            ))
+
+            styles_data.append(style_data)
+
+        cols = ['id', 'name', 'seo_name', 'description', 'body', 'body_desc', 'acidity',
+                'acidity_desc', 'country_code', 'wine_type_id', 'region_id']
+        df = pd.DataFrame(styles_data, columns=cols)
+
+        return df
+
+
     def create_wine_table(self):
         pass
     def create_winery_table(self):
@@ -162,6 +197,8 @@ class Transform(object):
             df = self.create_vintage_table()
         elif table_name == 'country':
             df = self.create_country_table()
+        elif table_name == 'style':
+            df = self.create_style_table()
 
         return df
 
@@ -186,7 +223,8 @@ class Transform(object):
 
 
 if __name__ == '__main__':
-    d = Transform().create_table('country')
-    PostGresClient().insert_data_from_df(d, 'country')
+    d = Transform().create_table('region')
+    PostGresClient().insert_data_from_df(d, 'region')
+    #print(d.region_id.unique())
     
    
