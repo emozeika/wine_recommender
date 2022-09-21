@@ -59,8 +59,3 @@ class PostGresClient(object):
 
 
 
-
-if __name__ =='__main__':
-    df = pd.read_csv('x60.csv')
-    
-    PostGresClient().insert_data_from_df(df, 'client_test')

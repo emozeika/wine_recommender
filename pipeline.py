@@ -9,9 +9,9 @@ class Pipeline(object):
     ETL_ = {
         'country' : ['country'],
         'region' : ['region'],
-        'grape' : ['grape']#,
-        #'style' : ['style'],
-        #'vintage' : ['vintage', 'wine', 'wineries']
+        'grape' : ['grape'],
+        'style' : ['style'],
+        'vintage' : ['vintage', 'wine', 'wineries']
     }
 
     def __init__(self):

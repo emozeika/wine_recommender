@@ -1,4 +1,3 @@
-from pkgutil import extend_path
 import pandas as pd
 import json
 import pprint as pprint
@@ -184,13 +183,13 @@ class Transform(object):
 
     def create_wine_table(self):
         '''
-        Function to create the style table from raw data
+        Function to create the wine table from raw data
         '''
         raw_data = self.load_file('vintage.json')
 
         wines_data = []
         for wine in raw_data['vintages']:
-            wine = wine.get('vintage').get('wine')
+            wine = wine.get('vintage').get('wine', None)
             
             wine_data = []
             if wine:
@@ -223,9 +222,29 @@ class Transform(object):
 
 
 
-    #TODO
     def create_winery_table(self):
-        pass
+        '''
+        Function to create the winery table from raw data
+        '''
+        raw_data = self.load_file('vintage.json')
+
+        wineries_data = []
+        for winery in raw_data['vintages']:
+            winery = winery.get('vintage').get('wine').get('winery', None)
+    
+            winery_data = []
+            if winery:
+                winery_data.extend((
+                    winery.get('id', 'NULL'),
+                    winery.get('name', 'NULL'),
+                    winery.get('seo_name', 'NULL')
+                ))
+                wineries_data.append(winery_data)
+
+        cols = ['id', 'name', 'seo_name']
+        df = df = pd.DataFrame(wineries_data, columns=cols)
+        df.drop_duplicates(inplace=True) #drop dupicates since we build through vintage
+        return df
 
 
 
@@ -248,28 +267,3 @@ class Transform(object):
         return df
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == '__main__':
-    d = Transform().create_table('wine')
-    PostGresClient().insert_data_from_df(d, 'wine')
-    #print(d.region_id.unique())
-    
-   

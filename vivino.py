@@ -119,8 +119,3 @@ class Vivino(object):
  
 
 
-if __name__ == '__main__':
-    
-    Vivino().save_data('vintage')
-    #print(len(r['explore_vintage']['matches']))
-
