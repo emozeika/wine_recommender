@@ -181,6 +181,7 @@ class Transform(object):
         return df
 
 
+
     def create_wine_table(self):
         '''
         Function to create the wine table from raw data
@@ -267,3 +268,6 @@ class Transform(object):
         return df
 
 
+if __name__ == '__main__':
+    d = Transform().create_table('winery')
+    PostGresClient().insert_data_from_df(d, 'winery')

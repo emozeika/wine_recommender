@@ -1,6 +1,4 @@
 #packages that are needed for functions inside Vivino class
-from pprint import pprint
-from urllib import response
 import requests
 import json
 import math
