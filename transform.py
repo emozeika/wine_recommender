@@ -268,6 +268,4 @@ class Transform(object):
         return df
 
 
-if __name__ == '__main__':
-    d = Transform().create_table('winery')
-    PostGresClient().insert_data_from_df(d, 'winery')
+
