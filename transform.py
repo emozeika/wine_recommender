@@ -126,7 +126,9 @@ class Transform(object):
 
         vintages_data = []
         for vintage in raw_data['vintages']:
+            price = vintage.get('price', None)
             vintage = vintage['vintage']
+
             vintage_data = []
             #getting id, name and seo_name
             vintage_data.extend((
@@ -137,11 +139,13 @@ class Transform(object):
                 vintage.get('statistics').get('ratings_average', 'NULL') if vintage.get('statistics', None) else 'NULL',        #avergae rating
                 vintage.get('statistics').get('ratings_count', 'NULL') if vintage.get('statistics', None) else 'NULL',          #number of ratings
                 vintage.get('wine').get('id', 'NULL') if vintage.get('wine', None) else 'NULL',                             #wine id
+                price.get('amount', 'NULL') if price else 'NULL',
+                price.get('bottle_type_id', 'NULL') if price else 'NULL'
             ))
 
             vintages_data.append(vintage_data)
 
-        cols = ['id', 'name', 'seo_name', 'year', 'avg_rating', 'rating_count',  'wine_id']
+        cols = ['id', 'name', 'seo_name', 'year', 'avg_rating', 'rating_count',  'wine_id', 'price', 'bottle_type_id']
         df = pd.DataFrame(vintages_data, columns=cols)
 
         return df
@@ -269,3 +273,6 @@ class Transform(object):
 
 
 
+if __name__ == '__main__':
+    d = Transform().create_table('vintage')
+    PostGresClient().insert_data_from_df(d, 'vintage')
