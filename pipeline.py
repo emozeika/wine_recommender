@@ -11,7 +11,7 @@ class Pipeline(object):
         'region' : ['region'],
         'grape' : ['grape'],
         'style' : ['style'],
-        'vintage' : ['vintage', 'wine', 'winery']
+        'vintage' : ['vintage', 'wine', 'winery', 'flavor']
     }
 
     def __init__(self):

@@ -253,6 +253,49 @@ class Transform(object):
 
 
 
+    def create_wine_flavor_table(self):
+        '''
+        Function to create the winery flavor profile grouping from raw data
+        '''
+        raw_data = self.load_file('vintage.json')
+
+        flavors_data = []
+        for wine in raw_data['vintages']:
+            wine_id = wine.get('vintage').get('wine').get('id', 'NULL')
+            wine = wine.get('vintage').get('wine').get('taste', None)
+
+            if wine:
+                flavor = wine.get('flavor', None)
+                if flavor:
+                    for i in range(len(flavor)):
+                        flavor_data = [wine_id, flavor[i].get('group', None)]
+                        #getting keywords
+                        p_kwds, s_kwds = '', ''
+                        if flavor[i].get('primary_keywords', None):
+                            for j in range(len(flavor[i].get('primary_keywords'))):
+                                p_kwds += (flavor[i].get('primary_keywords')[j].get('name').replace(' ', '_') + '|')
+                            flavor_data.append(p_kwds[:-1])
+                        else:
+                            flavor_data.append('NULL')
+                        if flavor[i].get('secondary_keywords', None):
+                            for j in range(len(flavor[i].get('secondary_keywords'))):
+                                s_kwds += (flavor[i].get('secondary_keywords')[j].get('name').replace(' ', '_') + '|')
+                            flavor_data.append(s_kwds[:-1])
+                        else:
+                            flavor_data.append('NULL')
+                        flavors_data.append(flavor_data)
+        
+
+
+        cols = ['wine_id', 'group', 'primary_keywords', 'secondary_keywords']
+        df = pd.DataFrame(flavors_data, columns=cols)
+        df.drop_duplicates(subset=['wine_id', 'group'], inplace=True) #drop dupicates since we build through vintage
+        return df
+
+
+
+
+
     def create_table(self, table_name):
         if table_name == 'region':
             df = self.create_region_table()
@@ -268,11 +311,14 @@ class Transform(object):
             df = self.create_wine_table()
         elif table_name == 'winery':
             df = self.create_winery_table()
+        elif table_name == 'flavor':
+            df = self.create_wine_flavor_table()
 
         return df
 
 
 
 if __name__ == '__main__':
-    d = Transform().create_table('vintage')
-    PostGresClient().insert_data_from_df(d, 'vintage')
+    d = Transform().create_table('flavor')
+    PostGresClient().insert_data_from_df(d, 'flavor')
+   
