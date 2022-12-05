@@ -1,3 +1,4 @@
+from operator import le
 import pandas as pd
 import json
 import pprint as pprint
@@ -294,6 +295,38 @@ class Transform(object):
 
 
 
+    def create_flavor_frequency_table(self):
+        '''
+        Function to create the winery flavor frequency profile grouping from raw data
+        '''
+        raw_data = self.load_file('vintage.json')
+        flavors_data = []
+        for wine in raw_data['vintages']:
+            wine_id = wine.get('vintage').get('wine').get('id', 'NULL')
+            wine = wine.get('vintage').get('wine').get('taste', None)
+
+            if wine:
+                flavor = wine.get('flavor', None)
+                if flavor:
+                    for i in range(len(flavor)):
+                        prmy_keywrds = flavor[i].get('primary_keywords', None)
+                        if prmy_keywrds:
+                            for j in range(len(prmy_keywrds)):
+                                flavor_data = [wine_id, flavor[i].get('group', None)]
+                                flavor_data.extend((
+                                    prmy_keywrds[j].get('id', 'NULL'),
+                                    prmy_keywrds[j].get('name', 'NULL'),
+                                    prmy_keywrds[j].get('count', 'NULL')
+                                ))
+                                flavors_data.append(flavor_data)
+
+        cols = ['wine_id', 'group', 'keyword_id', 'keyword_name', 'keyword_count']
+        df = pd.DataFrame(flavors_data, columns=cols)
+        df.drop_duplicates(subset=['wine_id', 'group', 'keyword_id', 'keyword_count'], inplace=True) #drop dupicates since we build through vintage
+        return df             
+
+
+
 
 
     def create_table(self, table_name):
@@ -313,7 +346,8 @@ class Transform(object):
             df = self.create_winery_table()
         elif table_name == 'flavor':
             df = self.create_wine_flavor_table()
-
+        elif table_name == 'flavor_freq':
+            df = self.create_flavor_frequency_table()
         return df
 
 

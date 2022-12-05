@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+import pandas.io.sql as psql
 import psycopg2
 import pandas as pd
 import io
@@ -55,6 +56,15 @@ class PostGresClient(object):
         #add data to table
         cur.copy_from(output, table_name) 
         conn.commit()
+
+    def load_table(self, table_name):
+        #create connection
+        conn = self.ENGINE_.raw_connection()
+        cur = conn.cursor()
+
+        df  = psql.read_sql(f'SELECT * FROM {table_name}', conn)
+        return df
+
 
 
 

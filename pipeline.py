@@ -12,6 +12,7 @@ class Pipeline(object):
         'grape' : ['grape'],
         'style' : ['style'],
         'vintage' : ['vintage', 'wine', 'winery', 'flavor']
+        # testing only!!!!!'vintage' : ['flavor_freq']
     }
 
     def __init__(self):
