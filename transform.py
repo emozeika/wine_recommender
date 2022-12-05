@@ -327,8 +327,6 @@ class Transform(object):
 
 
 
-
-
     def create_table(self, table_name):
         if table_name == 'region':
             df = self.create_region_table()
